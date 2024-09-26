@@ -1,0 +1,7 @@
+ //修改下库地址
+ pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
+
+ //selenium
+ pip install selenium
+
+ pip show selenium
