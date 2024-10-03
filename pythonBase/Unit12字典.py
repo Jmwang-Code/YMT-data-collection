@@ -1,4 +1,5 @@
 # 字典  键值对成对出现
+# TODO 对应java中的map
 # key是唯一的
 dict1 = {'Name': 'Runoob', 'Age': 7, 'Class': 'First'}
 
