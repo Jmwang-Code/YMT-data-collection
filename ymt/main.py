@@ -1,5 +1,6 @@
 from time import sleep
 
+from mysql.connector import connect
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
@@ -10,6 +11,7 @@ import time
 import random
 
 from Product import Product
+from dbapi.MysqlConnector import MySQLConnector
 
 
 # 定义一个函数用于确保元素在视口内
@@ -85,16 +87,6 @@ def print_hi():
     sleep(2)
 
     # 确保页面加载完成，可以通过查找新的元素
-    # WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, 'div[data-v-529211f5]')))
-    #
-    # # 获取所有span元素的文本内容
-    # spans = driver.find_elements(By.CSS_SELECTOR, 'div.horizontal.margin span')
-    #
-    # # 遍历所有span元素并打印输出
-    # for span in spans:
-    #     print(span.text)
-
-    # 确保页面加载完成，可以通过查找新的元素
     WebDriverWait(driver, 10).until(EC.presence_of_element_located(
         (By.CSS_SELECTOR, '#chandi_trend_price > div.bg.chandi_hangqing_detail_list > div.horizontal.margin')))
 
@@ -105,17 +97,6 @@ def print_hi():
     # 遍历所有span元素并打印输出
     for span in spans: (
         print(span.text))
-
-    # 获取所有span元素的文本内容
-    # spans = driver.find_elements(By.CSS_SELECTOR,
-    #                              '#chandi_trend_price > div.bg.chandi_hangqing_detail_list > div:nth-child(5) span')
-
-    # # 将文本内容存储在一个列表中
-    # data = [span.text for span in spans]
-
-    # # 打印输出列表中的数据
-    # for d in data:
-    #     print(d)
 
     # 获取指定元素下所有href属性的个数
     href_elements = driver.find_elements(By.CSS_SELECTOR,
@@ -134,29 +115,33 @@ def print_hi():
             f'> a:nth-child({i}) > div > div:nth-child(1) > span.text_product_name.text_align_left'
         )
         areas = driver.find_elements(By.CSS_SELECTOR, selector)
+        area_values = [area.text for area in areas]
 
         selector = (
             '#chandi_trend_price > div.bg.chandi_hangqing_detail_list > div:nth-child(5) '
             f'> a:nth-child({i}) > div > div:nth-child(2) > span.text_product_name.text_align_left'
         )
         categories = driver.find_elements(By.CSS_SELECTOR, selector)
+        category_values = [category.text for category in categories]
 
         selector = (
             '#chandi_trend_price > div.bg.chandi_hangqing_detail_list > div:nth-child(5) '
             f'> a:nth-child({i}) > div > span'
         )
         prices = driver.find_elements(By.CSS_SELECTOR, selector)
+        prices_values = [price.text for price in prices]
 
         selector = (
             '#chandi_trend_price > div.bg.chandi_hangqing_detail_list > div:nth-child(5) '
             f'> a:nth-child({i}) > div > span'
         )
         changes = driver.find_elements(By.CSS_SELECTOR, selector)
+        changes_values = [change.text for change in changes]
 
-        areas_list.append(areas)
-        categories_list.append(categories)
-        prices_list.append(prices)
-        changes_list.append(changes)
+        areas_list.append(area_values)
+        categories_list.append(category_values)
+        prices_list.append(prices_values)
+        changes_list.append(changes_values)
 
     dict1 = dict()
 
@@ -185,7 +170,14 @@ def print_hi():
     # 关闭浏览器
     driver.quit()
 
+    return dict1
+
 
 # 如果当前文件被直接执行，则调用print_hi函数
+def test_db():
+    connector = MySQLConnector('123.249.36.184','test1','N37k4Fab5AwYPmbB','test1')
+    connector.test_connection()
+
 if __name__ == '__main__':
     print_hi()
+    # test_db()
