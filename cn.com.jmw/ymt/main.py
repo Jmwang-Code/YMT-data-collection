@@ -1,6 +1,5 @@
 from time import sleep
 
-from mysql.connector import connect
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
@@ -175,9 +174,9 @@ def print_hi():
 
 # 如果当前文件被直接执行，则调用print_hi函数
 def test_db():
-    connector = MySQLConnector('123.249.36.184','test1','N37k4Fab5AwYPmbB','test1')
+    connector = MySQLConnector('123.249.36.184','agricultural_products','123456','agricultural_products')
     connector.test_connection()
 
 if __name__ == '__main__':
-    print_hi()
-    # test_db()
+    # print_hi()
+    test_db()
