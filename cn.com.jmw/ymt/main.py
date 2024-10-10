@@ -9,9 +9,11 @@ from selenium.webdriver.support import expected_conditions as EC
 import time
 import random
 
+from typing import Dict
 from Product import Product
 from dbapi.MysqlConnector import MySQLConnector
-
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
 # 定义一个函数用于确保元素在视口内
 def scroll_to_element(driver, element):
@@ -51,6 +53,7 @@ def print_hi():
     driver = webdriver.Chrome(service=service)
 
     # 打开指定的URL网页
+    # driver.get('https://www.baidu.com/')
     driver.get('https://www.ymt.com/')
 
     # 等待页面加载
@@ -173,10 +176,22 @@ def print_hi():
 
 
 # 如果当前文件被直接执行，则调用print_hi函数
-def test_db():
+def test_db(dict1: Dict[int, Product]):
     connector = MySQLConnector('123.249.36.184','agricultural_products','123456','agricultural_products')
     connector.test_connection()
+    conn_string = f"mysql://{connector.username}:{connector.password}@{connector.host}/{connector.database_name}"
+    engine = create_engine(conn_string)
+    Session = sessionmaker(bind=engine)
+    # Create a session using the Session class
+    session = Session()
+
+    for key, value in dict1.items():
+        # 添加Product对象到会话
+        session.add(dict1[key])
+
+    session.commit()
+    session.close()
 
 if __name__ == '__main__':
-    # print_hi()
-    test_db()
+    dict1 = print_hi()
+    test_db(dict1)
