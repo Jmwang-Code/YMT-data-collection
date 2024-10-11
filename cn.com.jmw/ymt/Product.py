@@ -14,6 +14,13 @@ class Product(Base):
     '''
     __tablename__ = 'ymt_products'  # 数据库表名
 
+    def __init__(self, area: str, category: str, price: float, change: float):
+        self.area = area
+        self.category = category
+        self.price = price
+        self.change = change
+        self.create_time = datetime.now()
+
     id = Column(Integer, primary_key=True)
     area = Column(String)
     category = Column(String)

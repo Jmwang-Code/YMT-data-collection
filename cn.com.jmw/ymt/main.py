@@ -98,7 +98,8 @@ def print_hi():
 
     # 遍历所有span元素并打印输出
     for span in spans: (
-        print(span.text))
+        print(span.text)
+    )
 
     # 获取指定元素下所有href属性的个数
     href_elements = driver.find_elements(By.CSS_SELECTOR,
@@ -125,20 +126,24 @@ def print_hi():
         )
         categories = driver.find_elements(By.CSS_SELECTOR, selector)
         category_values = [category.text for category in categories]
-
+        # chandi_trend_price > div.bg.chandi_hangqing_detail_list > div:nth-child(5) > a:nth-child(2) > div > span
         selector = (
             '#chandi_trend_price > div.bg.chandi_hangqing_detail_list > div:nth-child(5) '
             f'> a:nth-child({i}) > div > span'
         )
         prices = driver.find_elements(By.CSS_SELECTOR, selector)
         prices_values = [price.text for price in prices]
-
+        # chandi_trend_price > div.bg.chandi_hangqing_detail_list > div:nth-child(5) > a:nth-child(1) > div > div.div_sales.flex_1.horizontal.align_x_right.center_y > div > span
         selector = (
             '#chandi_trend_price > div.bg.chandi_hangqing_detail_list > div:nth-child(5) '
-            f'> a:nth-child({i}) > div > span'
+            f'> a:nth-child({i}) > div > div.div_sales.flex_1.horizontal.align_x_right.center_y > div > span'
         )
         changes = driver.find_elements(By.CSS_SELECTOR, selector)
         changes_values = [change.text for change in changes]
+
+        # Convert price and change values to float
+        prices_values = [float(price.split('元/斤')[0]) for price in prices_values]
+        changes_values = [float(change.split('元/斤')[0]) for change in changes_values]
 
         areas_list.append(area_values)
         categories_list.append(category_values)
@@ -179,7 +184,7 @@ def print_hi():
 def test_db(dict1: Dict[int, Product]):
     connector = MySQLConnector('123.249.36.184','agricultural_products','123456','agricultural_products')
     connector.test_connection()
-    conn_string = f"mysql://{connector.username}:{connector.password}@{connector.host}/{connector.database_name}"
+    conn_string = "mysql+pymysql://agricultural_products:123456@123.249.36.184/agricultural_products"
     engine = create_engine(conn_string)
     Session = sessionmaker(bind=engine)
     # Create a session using the Session class
