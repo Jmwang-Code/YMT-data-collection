@@ -8,6 +8,9 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
 import random
+import sys
+import os
+import pyautogui
 
 from typing import Dict
 from Product import Product
@@ -21,36 +24,59 @@ def scroll_to_element(driver, element):
     time.sleep(0.5)  # 等待滚动完成
 
 
-# 定义一个函数用于模拟自然的鼠标移动
-def move_to_element_naturally(driver, element):
-    actions = ActionChains(driver)
-
+def move_mouse_naturally_to_element(driver, element):
     # 确保元素在视口内
     scroll_to_element(driver, element)
 
-    # 获取元素的位置和大小
-    x_offset = element.location['x'] + element.size['width'] / 2  # 目标元素中心X坐标
-    y_offset = element.location['y'] + element.size['height'] / 2  # 目标元素中心Y坐标
+    # 获取元素在页面中的位置
+    location = element.location_once_scrolled_into_view
+    size = element.size
 
-    # 移动到目标元素
-    actions.move_to_element(element).perform()  # 直接移动到元素
+    # 模拟分步移动
+    for _ in range(random.randint(2, 5)):
+        x = location['x'] + random.uniform(-20, 20) + size['width'] / 2
+        y = location['y'] + random.uniform(-20, 20) + size['height'] / 2
+        pyautogui.moveTo(x, y, duration=random.uniform(0.5, 1.5))
+        random_sleep(0.5, 1.5)  # 停顿，模拟悬停
 
-    time.sleep(random.uniform(0.1, 0.3))  # 等待随机时间
-    actions.click().perform()  # 点击元素
+    # 最终移动到目标元素中心位置
+    pyautogui.moveTo(location['x'] + size['width'] / 2, location['y'] + size['height'] / 2,
+                     duration=random.uniform(1, 2))
+    time.sleep(random.uniform(0.5, 1.5))
+
+    # 点击目标元素
+    pyautogui.click()
+    random_sleep(0.5, 1.5)  # 短暂等待，让操作更像人类行为
+
+def random_sleep(min_time=0.5, max_time=2.0):
+    time.sleep(random.uniform(min_time, max_time))
 
 
 # 定义一个print_hi函数
 def print_hi():
     print('Hello, World!')
 
+    # 获取当前脚本的绝对路径
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+
+    # 将dbapi路径添加到模块搜索路径中
+    sys.path.append(os.path.join(script_dir, 'dbapi'))
+
     # 设置ChromeDriver的路径
     driver_path = r'C:\Users\79283\PycharmProjects\pythonProject\chromedriver.exe'  # 请替换为你的chromedriver路径
+
+    # 创建ChromeOptions对象，并设置选项
+    options = webdriver.ChromeOptions()
+    options.add_argument(
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36")
+    options.add_experimental_option("excludeSwitches", ["enable-automation"])
+    options.add_experimental_option("useAutomationExtension", False)
 
     # 创建Service对象，并指定ChromeDriver的路径
     service = Service(driver_path)
 
     # 创建Chrome浏览器对象，并将Service对象传递给它
-    driver = webdriver.Chrome(service=service)
+    driver = webdriver.Chrome(service=service, options=options)
 
     # 打开指定的URL网页
     # driver.get('https://www.baidu.com/')
@@ -61,15 +87,18 @@ def print_hi():
 
     # 找到指定的元素
     element = driver.find_element(By.XPATH, '//a[@href="/hangqing"]')
-
-    # 模拟自然鼠标移动并点击
-    move_to_element_naturally(driver, element)
+    random_sleep()
+    move_mouse_naturally_to_element(driver, element)
+    random_sleep()
 
     # 等待页面跳转
     time.sleep(3)
 
     # 找到指定的元素
     element = driver.find_element(By.XPATH, '//input[@placeholder="搜索农产品"]')
+    random_sleep()
+    move_mouse_naturally_to_element(driver, element)
+    random_sleep()
 
     # 输入搜索内容
     element.send_keys("砂仁")
@@ -77,14 +106,21 @@ def print_hi():
     # Find the "搜索" button element
     button = driver.find_element(By.XPATH, '//button[contains(text(), "搜索")]')
 
-    # 单击按钮
-    button.click()
+    random_sleep()
+    move_mouse_naturally_to_element(driver, button)
+    random_sleep()
+
+    # # 单击按钮
+    # button.click()
 
     sleep(2)
 
     # 单击链接 寻找阳春砂仁
     link = driver.find_element(By.XPATH, '//a[@href="/hangqing/juhe-306886?breed_id=42788"]')
-    link.click()
+    random_sleep()
+    move_mouse_naturally_to_element(driver, link)
+    random_sleep()
+    # link.click()
 
     sleep(2)
 
@@ -96,10 +132,10 @@ def print_hi():
     spans = driver.find_elements(By.CSS_SELECTOR,
                                  '#chandi_trend_price > div.bg.chandi_hangqing_detail_list > div.horizontal.margin span')
 
-    # 遍历所有span元素并打印输出
-    for span in spans: (
-        print(span.text)
-    )
+    # # 遍历所有span元素并打印输出
+    # for span in spans: (
+    #     print(span.text)
+    # )
 
     # 获取指定元素下所有href属性的个数
     href_elements = driver.find_elements(By.CSS_SELECTOR,
